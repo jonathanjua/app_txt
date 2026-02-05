@@ -16,7 +16,9 @@ const THEME_KEY = 'editor-theme';
 // Documentos não salvos (restaurados ao reabrir o app)
 const UNSAVED_TABS_KEY = 'editor-unsaved-tabs';
 const UNSAVED_DEBOUNCE_MS = 2000;
+const STATUS_BAR_DEBOUNCE_MS = 60;
 let unsavedDebounceTimer = null;
+let statusBarDebounceTimer = null;
 
 function isDarkTheme() {
   return document.documentElement.classList.contains('dark');
@@ -126,7 +128,9 @@ function createNewTab(path, content) {
 
 function closeTab(index) {
   const tab = tabs[index];
-  if (tab.isDirty && !confirm(`Fechar "${getTabLabel(tab.path)}" sem salvar?`)) return;
+  saveCurrentToTab();
+  const hasContent = tab.content.trim() !== '';
+  if (tab.isDirty && hasContent && !confirm(`Fechar "${getTabLabel(tab.path)}" sem salvar?`)) return;
   tabs.splice(index, 1);
   if (tabs.length === 0) {
     createNewTab(null, '');
@@ -155,6 +159,14 @@ function updateStatusBar() {
   const selLen = editor.selectionEnd - editor.selectionStart;
   statusLnCol.textContent = `Ln ${line}, Col ${col}`;
   statusChars.textContent = selLen > 0 ? `${selLen} de ${len} caracteres` : `${len} caracteres`;
+}
+
+function debouncedUpdateStatusBar() {
+  if (statusBarDebounceTimer) clearTimeout(statusBarDebounceTimer);
+  statusBarDebounceTimer = setTimeout(() => {
+    statusBarDebounceTimer = null;
+    updateStatusBar();
+  }, STATUS_BAR_DEBOUNCE_MS);
 }
 
 function updateStatus() {
@@ -225,7 +237,7 @@ editor.addEventListener('input', () => {
   const tab = getCurrentTab();
   if (tab) tab.isDirty = true;
   updateStatus();
-  updateStatusBar();
+  debouncedUpdateStatusBar();
   renderTabBar();
   scheduleUnsavedSave();
 });

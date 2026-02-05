@@ -21,3 +21,19 @@ npm start
 - `Ctrl+N` (ou `Cmd+N` no Mac) – Novo
 - `Ctrl+O` (ou `Cmd+O`) – Abrir
 - `Ctrl+S` (ou `Cmd+S`) – Salvar
+- `Ctrl+W` – Fechar aba
+
+## Desempenho (Electron)
+
+O app já inclui:
+
+- **Sandbox** no renderer e leitura/escrita de arquivos no processo principal (IPC), reduzindo superfície de ataque e mantendo o renderer leve.
+- **Barra de status** com debounce (60 ms) na digitação para evitar atualizações excessivas do DOM.
+- **DevTools** abertos só em desenvolvimento (`npm start` com app não empacotado).
+- **Spellcheck** desativado nas webPreferences para economizar recurso.
+
+Para ir além:
+
+- **Tailwind em build**: em vez do CDN, gere um CSS estático com `npx tailwindcss -i ./src/input.css -o ./dist/output.css` e use esse arquivo; a abertura do app fica mais rápida e dispensa rede.
+- **Empacotar**: use `electron-builder` ou `electron-packager` para gerar o executável; o ASAR reduz tamanho e pode melhorar tempo de carga.
+- **Hardware acceleration**: mantida ativada por padrão; só desative com `app.disableHardwareAcceleration()` se houver problemas em algum GPU.

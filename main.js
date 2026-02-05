@@ -1,5 +1,6 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, Menu } = require('electron');
 const path = require('path');
+const fs = require('fs').promises;
 
 let mainWindow;
 
@@ -13,6 +14,10 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      sandbox: true,
+      spellcheck: false,
+      // Reduz uso de memória e CPU no renderer
+      backgroundThrottling: true,
     },
     title: 'Editor de Texto',
     show: false,
@@ -22,6 +27,7 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    if (process.env.ELECTRON_OPEN_DEVTOOLS === '1') mainWindow.webContents.openDevTools({ mode: 'detach' });
   });
 
   mainWindow.on('closed', () => {
@@ -29,7 +35,11 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // Remove o menu padrão do Electron
+  Menu.setApplicationMenu(null);
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -65,3 +75,6 @@ ipcMain.handle('dialog:saveFile', async (_, defaultPath) => {
   });
   return result.canceled ? null : result.filePath;
 });
+
+ipcMain.handle('fs:readFile', (_, filePath) => fs.readFile(filePath, 'utf-8'));
+ipcMain.handle('fs:writeFile', (_, filePath, content) => fs.writeFile(filePath, content, 'utf-8'));
