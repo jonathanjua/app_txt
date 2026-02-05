@@ -1,0 +1,16 @@
+{
+  "name": "app-txt",
+  "version": "1.0.0",
+  "description": "Editor de texto simples com Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron ."
+  },
+  "keywords": ["editor", "text", "electron"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}
