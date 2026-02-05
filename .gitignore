@@ -1,1 +1,17 @@
 node_modules/
+dist/
+assets/css/app.css
+*.log
+npm-debug.log*
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.local
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

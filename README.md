@@ -16,6 +16,25 @@ npm install
 npm start
 ```
 
+## Como fazer o build
+
+Instale as dependências e rode o build. O executável sai na pasta `dist/`.
+
+```bash
+npm install
+npm run build
+```
+
+- **Build para o seu sistema**
+  `npm run build` gera o instalável do sistema em que você está (Linux, Windows ou macOS).
+
+- **Build por plataforma**
+  - Windows: `npm run build:win` → instalador NSIS em `dist/`
+  - Linux: `npm run build:linux` → AppImage e .deb em `dist/`
+  - macOS: `npm run build:mac` → .dmg em `dist/`
+
+No Linux, após o build você pode executar o AppImage diretamente ou instalar o pacote `.deb`.
+
 ## Atalhos
 
 - `Ctrl+N` (ou `Cmd+N` no Mac) – Novo
