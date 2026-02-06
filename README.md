@@ -45,7 +45,33 @@ O CSS do Tailwind é gerado automaticamente antes de iniciar (`prestart`).
 
 ## 📦 Build e Distribuição
 
-### Build para todas as plataformas
+### 🚀 Build Automático (GitHub Actions)
+
+O projeto inclui **GitHub Actions** configurado para fazer build automático para todas as plataformas quando você cria uma tag de release.
+
+**Como usar:**
+
+1. **Crie uma tag de release:**
+   ```bash
+   git tag -a v1.0.0 -m "Release v1.0.0"
+   git push origin v1.0.0
+   ```
+
+2. **Ou crie a tag pelo GitHub:**
+   - Vá em **Releases** → **Draft a new release**
+   - Crie uma tag (ex: `v1.0.0`)
+   - O GitHub Actions vai fazer o build automaticamente
+
+3. **Downloads disponíveis:**
+   - Windows: `.exe` (instalador NSIS)
+   - Linux: `.AppImage` e `.deb`
+   - macOS: `.dmg`
+
+Os executáveis ficam disponíveis na página de **Releases** do GitHub automaticamente! 🎉
+
+### 🔨 Build Local
+
+#### Build para todas as plataformas
 
 ```bash
 npm run build
@@ -53,7 +79,7 @@ npm run build
 
 Gera o instalável para o sistema atual (Linux, Windows ou macOS) na pasta `dist/`.
 
-### Build por plataforma específica
+#### Build por plataforma específica
 
 ```bash
 # Windows (instalador NSIS)
@@ -66,9 +92,9 @@ npm run build:linux
 npm run build:mac
 ```
 
-### Instalação no Linux
+#### Instalação no Linux
 
-Após o build, você pode:
+Após o build local, você pode:
 
 - **Executar o AppImage diretamente:**
   ```bash
