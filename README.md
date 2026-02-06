@@ -1,58 +1,171 @@
-# Editor de Texto
+# 📝 Editor de Texto
 
-Editor de texto simples feito com Electron, HTML, JavaScript e Tailwind CSS.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Electron](https://img.shields.io/badge/Electron-28.0-blue.svg)](https://www.electronjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8.svg)](https://tailwindcss.com/)
 
-## Funcionalidades
+Editor de texto simples e moderno construído com Electron, HTML, JavaScript e Tailwind CSS. Interface limpa com suporte a múltiplas abas, temas claro/escuro e persistência automática de documentos não salvos.
 
-- **Novo** – Limpa o editor e inicia um novo documento
-- **Abrir** – Abre um arquivo (.txt, .md, .json, .js, .html, .css, etc.)
-- **Salvar** – Salva no arquivo atual (Ctrl/Cmd+S)
-- **Salvar como** – Salva em um novo arquivo
+## ✨ Funcionalidades
 
-## Como rodar
+- 📑 **Múltiplas abas** – Edite vários arquivos simultaneamente
+- 💾 **Persistência automática** – Documentos não salvos são guardados e restaurados ao reabrir o app
+- 🌓 **Temas claro/escuro** – Alternância rápida entre temas
+- ⌨️ **Atalhos de teclado** – Navegação e edição eficiente
+- 📊 **Barra de status** – Mostra linha, coluna e contagem de caracteres
+- 🎨 **Interface moderna** – Design limpo inspirado em editores profissionais
+- 🚀 **100% offline** – Todas as dependências incluídas (Tailwind e fontes locais)
+- 🔒 **Seguro** – Sandbox ativado, context isolation e operações de arquivo no processo principal
+
+## 🖼️ Capturas de Tela
+
+*Adicione screenshots do app aqui*
+
+## 🚀 Instalação
+
+### Pré-requisitos
+
+- Node.js 16+ e npm
+
+### Desenvolvimento
 
 ```bash
+# Clone o repositório
+git clone https://github.com/jonathanjua/app-txt.git
+cd app-txt
+
+# Instale as dependências
 npm install
+
+# Execute o app
 npm start
 ```
 
-## Como fazer o build
+O CSS do Tailwind é gerado automaticamente antes de iniciar (`prestart`).
 
-Instale as dependências e rode o build. O executável sai na pasta `dist/`.
+## 📦 Build e Distribuição
+
+### Build para todas as plataformas
 
 ```bash
-npm install
 npm run build
 ```
 
-- **Build para o seu sistema**
-  `npm run build` gera o instalável do sistema em que você está (Linux, Windows ou macOS).
+Gera o instalável para o sistema atual (Linux, Windows ou macOS) na pasta `dist/`.
 
-- **Build por plataforma**
-  - Windows: `npm run build:win` → instalador NSIS em `dist/`
-  - Linux: `npm run build:linux` → AppImage e .deb em `dist/`
-  - macOS: `npm run build:mac` → .dmg em `dist/`
+### Build por plataforma específica
 
-No Linux, após o build você pode executar o AppImage diretamente ou instalar o pacote `.deb`.
+```bash
+# Windows (instalador NSIS)
+npm run build:win
 
-## Atalhos
+# Linux (AppImage e .deb)
+npm run build:linux
 
-- `Ctrl+N` (ou `Cmd+N` no Mac) – Novo
-- `Ctrl+O` (ou `Cmd+O`) – Abrir
-- `Ctrl+S` (ou `Cmd+S`) – Salvar
-- `Ctrl+W` – Fechar aba
+# macOS (.dmg)
+npm run build:mac
+```
 
-## Desempenho (Electron)
+### Instalação no Linux
 
-O app já inclui:
+Após o build, você pode:
 
-- **Sandbox** no renderer e leitura/escrita de arquivos no processo principal (IPC), reduzindo superfície de ataque e mantendo o renderer leve.
-- **Barra de status** com debounce (60 ms) na digitação para evitar atualizações excessivas do DOM.
-- **DevTools** abertos só em desenvolvimento (`npm start` com app não empacotado).
-- **Spellcheck** desativado nas webPreferences para economizar recurso.
+- **Executar o AppImage diretamente:**
+  ```bash
+  chmod +x "dist/Editor de Texto-1.0.0.AppImage"
+  ./dist/Editor\ de\ Texto-1.0.0.AppImage
+  ```
 
-Para ir além:
+- **Instalar o pacote .deb:**
+  ```bash
+  sudo dpkg -i dist/app-txt_1.0.0_amd64.deb
+  ```
 
-- **Tailwind em build**: em vez do CDN, gere um CSS estático com `npx tailwindcss -i ./src/input.css -o ./dist/output.css` e use esse arquivo; a abertura do app fica mais rápida e dispensa rede.
-- **Empacotar**: use `electron-builder` ou `electron-packager` para gerar o executável; o ASAR reduz tamanho e pode melhorar tempo de carga.
-- **Hardware acceleration**: mantida ativada por padrão; só desative com `app.disableHardwareAcceleration()` se houver problemas em algum GPU.
+## ⌨️ Atalhos de Teclado
+
+| Atalho | Ação |
+|--------|------|
+| `Ctrl+N` / `Cmd+N` | Novo documento |
+| `Ctrl+O` / `Cmd+O` | Abrir arquivo |
+| `Ctrl+S` / `Cmd+S` | Salvar |
+| `Ctrl+W` / `Cmd+W` | Fechar aba |
+
+## 📁 Estrutura do Projeto
+
+```
+app-txt/
+├── assets/
+│   ├── css/
+│   │   ├── input.css      # Entrada do Tailwind
+│   │   └── app.css        # CSS gerado (não versionado)
+│   └── icon.png           # Ícone do app
+├── main.js                # Processo principal do Electron
+├── preload.js             # Script de preload (bridge seguro)
+├── renderer.js            # Lógica do editor (renderer)
+├── index.html             # Interface do app
+├── tailwind.config.js     # Configuração do Tailwind
+├── package.json
+└── README.md
+```
+
+## 🛠️ Tecnologias
+
+- **Electron** – Framework para apps desktop multiplataforma
+- **Tailwind CSS** – Framework CSS utilitário
+- **JetBrains Mono** – Fonte monoespaçada
+- **electron-builder** – Empacotamento e distribuição
+
+## ⚡ Desempenho
+
+O app inclui várias otimizações:
+
+- ✅ **Sandbox** no renderer com operações de arquivo via IPC
+- ✅ **Debounce** na barra de status (60ms) durante digitação
+- ✅ **CSS minificado** e fontes locais (100% offline)
+- ✅ **Spellcheck desativado** para reduzir uso de recursos
+- ✅ **DevTools** só em desenvolvimento
+
+## 📝 Uso
+
+1. **Criar novo documento:** Clique em "Novo" ou use `Ctrl+N`
+2. **Abrir arquivo:** Clique em "Abrir" ou use `Ctrl+O`
+3. **Salvar:** Use `Ctrl+S` ou clique em "Salvar"
+4. **Salvar como:** Use o menu Arquivo → "Salvar como..."
+5. **Alternar tema:** Clique no ícone de sol/lua na barra superior
+6. **Fechar aba:** Clique no ✕ na aba ou use `Ctrl+W`
+
+### Documentos não salvos
+
+Documentos sem salvar são automaticamente guardados no `localStorage` e restaurados quando você reabre o app. Abas vazias são fechadas sem confirmação.
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Sinta-se à vontade para:
+
+1. Fazer fork do projeto
+2. Criar uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abrir um Pull Request
+
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 👤 Autor
+
+**Jonathan de Almeida**
+
+- Email: jonathan.almeida@gmail.com
+- GitHub: [@jonathanjua](https://github.com/jonathanjua)
+
+## 🙏 Agradecimentos
+
+- [Electron](https://www.electronjs.org/) pela plataforma incrível
+- [Tailwind CSS](https://tailwindcss.com/) pelo framework CSS
+- [Fontsource](https://fontsource.org/) pelas fontes self-hosted
+- [JetBrains Mono](https://www.jetbrains.com/lp/mono/) pela fonte monoespaçada
+
+---
+
+⭐ Se este projeto foi útil para você, considere dar uma estrela no GitHub!
