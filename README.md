@@ -19,7 +19,7 @@ Editor de texto simples e moderno construído com Electron, HTML, JavaScript e T
 
 ## 🖼️ Capturas de Tela
 
-*Adicione screenshots do app aqui*
+![Editor de Texto](Capturadetela.png)
 
 ## 🚀 Instalação
 
