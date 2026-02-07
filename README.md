@@ -6,6 +6,12 @@
 
 Editor de texto simples e moderno construído com Electron, HTML, JavaScript e Tailwind CSS. Interface limpa com suporte a múltiplas abas, temas claro/escuro e persistência automática de documentos não salvos.
 
+### Sobre o projeto
+
+Sempre gostei muito do Bloco de Notas do Windows. Acabei criando este projeto para ter algo parecido e útil no dia a dia — hoje uso Linux e o app tem me ajudado bastante. Espero que possa ajudar outras pessoas também.
+
+O projeto não foi pensado para usar “a melhor tecnologia” de mercado; resolvi usar as stacks que já domino (Electron, HTML, JS, Tailwind) para entregar algo funcional e que eu consiga manter com tranquilidade.
+
 ## ✨ Funcionalidades
 
 - 📑 **Múltiplas abas** – Edite vários arquivos simultaneamente
