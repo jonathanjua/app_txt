@@ -55,30 +55,6 @@ O CSS do Tailwind é gerado automaticamente antes de iniciar (`prestart`).
 
 ## 📦 Build e Distribuição
 
-### 🚀 Build Automático (GitHub Actions)
-
-O projeto inclui **GitHub Actions** configurado para fazer build automático para todas as plataformas quando você cria uma tag de release.
-
-**Como usar:**
-
-1. **Crie uma tag de release:**
-   ```bash
-   git tag -a v1.0.0 -m "Release v1.0.0"
-   git push origin v1.0.0
-   ```
-
-2. **Ou crie a tag pelo GitHub:**
-   - Vá em **Releases** → **Draft a new release**
-   - Crie uma tag (ex: `v1.0.0`)
-   - O GitHub Actions vai fazer o build automaticamente
-
-3. **Downloads disponíveis:**
-   - Windows: `.exe` (instalador NSIS)
-   - Linux: `.AppImage` e `.deb`
-   - macOS: `.dmg`
-
-Os executáveis ficam disponíveis na página de **Releases** do GitHub automaticamente! 🎉
-
 ### 🔨 Build Local
 
 #### Build para todas as plataformas
