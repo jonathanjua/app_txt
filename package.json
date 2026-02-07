@@ -51,6 +51,7 @@
     },
     "linux": {
       "target": ["AppImage", "deb"],
+      "icon": "build/256x256.png",
       "category": "Utility",
       "maintainer": "Jonathan de Almeida <jonathan.almeida@gmail.com>"
     },

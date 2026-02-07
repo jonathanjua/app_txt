@@ -18,6 +18,10 @@ if (!fs.existsSync(buildDir)) {
 
 fs.copyFileSync(iconSrc, iconDestPng);
 console.log('Ícone copiado para build/icon.png');
+// Linux: electron-builder exige o tamanho no nome (ex.: 256x256.png)
+const icon256 = path.join(buildDir, '256x256.png');
+fs.copyFileSync(iconSrc, icon256);
+console.log('Ícone copiado para build/256x256.png (Linux)');
 
 // Gerar icon.ico para Windows (NSIS usa e mostra no instalador/atalho)
 try {
