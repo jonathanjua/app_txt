@@ -35,13 +35,6 @@ function createWindow() {
     if (process.env.ELECTRON_OPEN_DEVTOOLS === '1') mainWindow.webContents.openDevTools({ mode: 'detach' });
   });
 
-  mainWindow.on('close', (event) => {
-    if (tray && !app.isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
-    }
-  });
-
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
