@@ -1,7 +1,7 @@
 {
   "name": "app-txt",
-  "version": "1.0.2",
-  "description": "Editor de texto simples com Electron",
+  "version": "1.0.3",
+  "description": "Editor de texto simples",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -47,7 +47,8 @@
       "node_modules/@fontsource/jetbrains-mono/**"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "build/icon.ico"
     },
     "linux": {
       "target": ["AppImage", "deb"],
@@ -57,6 +58,7 @@
     },
     "mac": {
       "target": "dmg",
+      "icon": "build/icon.png",
       "category": "public.app-category.utilities"
     }
   }

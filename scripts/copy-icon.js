@@ -9,7 +9,7 @@ const iconDestIco = path.join(buildDir, 'icon.ico');
 
 if (!fs.existsSync(iconSrc)) {
   console.warn('assets/icon.png não encontrado');
-  process.exit(0);
+  process.exit(1);
 }
 
 if (!fs.existsSync(buildDir)) {
@@ -18,21 +18,22 @@ if (!fs.existsSync(buildDir)) {
 
 fs.copyFileSync(iconSrc, iconDestPng);
 console.log('Ícone copiado para build/icon.png');
+
 // Linux: electron-builder exige o tamanho no nome (ex.: 256x256.png)
 const icon256 = path.join(buildDir, '256x256.png');
 fs.copyFileSync(iconSrc, icon256);
 console.log('Ícone copiado para build/256x256.png (Linux)');
 
-// Gerar icon.ico para Windows (NSIS usa e mostra no instalador/atalho)
+// Gerar icon.ico para Windows (png-to-ico; sem dependências nativas/OpenSSL)
 try {
   require('png-to-ico')(iconSrc)
     .then((ico) => {
       fs.writeFileSync(iconDestIco, ico);
       console.log('Ícone Windows gerado: build/icon.ico');
     })
-    .catch(() => console.warn('png-to-ico falhou; ícone Windows usará PNG.'))
+    .catch((err) => console.warn('png-to-ico falhou:', err.message))
     .finally(() => process.exit(0));
 } catch (e) {
-  console.warn('png-to-ico não instalado; ícone Windows usará PNG.');
+  console.warn('png-to-ico não disponível; use build/icon.png no Windows.');
   process.exit(0);
 }
