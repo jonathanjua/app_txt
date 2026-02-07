@@ -8,15 +8,18 @@
     "dev": "electron .",
     "build:css": "tailwindcss -i ./assets/css/input.css -o ./assets/css/app.css --minify",
     "prestart": "npm run build:css",
-    "prepare:icons": "node scripts/copy-icon.js",
-    "prebuild": "npm run build:css && npm run prepare:icons",
+    "prebuild": "npm run build:css",
     "build": "electron-builder",
     "build:win": "electron-builder --win",
     "build:linux": "electron-builder --linux",
     "build:mac": "electron-builder --mac",
     "release": "node scripts/release.js"
   },
-  "keywords": ["editor", "text", "electron"],
+  "keywords": [
+    "editor",
+    "text",
+    "electron"
+  ],
   "author": "Jonathan de Almeida <jonathan.almeida@gmail.com>",
   "homepage": "https://github.com/jonathanjua/app-txt",
   "license": "MIT",
@@ -30,7 +33,6 @@
   "devDependencies": {
     "electron": "^28.0.0",
     "electron-builder": "^24.0.0",
-    "png-to-ico": "^2.1.0",
     "tailwindcss": "^3.4.0"
   },
   "build": {
@@ -55,7 +57,10 @@
       "icon": "win/icon.ico"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "icons",
       "category": "Utility",
       "maintainer": "Jonathan de Almeida <jonathan.almeida@gmail.com>"
