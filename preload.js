@@ -36,12 +36,4 @@ contextBridge.exposeInMainWorld('api', {
   readFile: (filePath) => ipcRenderer.invoke('fs:readFile', filePath),
   readFileStream,
   writeFile: (filePath, content) => ipcRenderer.invoke('fs:writeFile', filePath, content),
-  drive: {
-    getStatus: () => ipcRenderer.invoke('drive:getStatus'),
-    saveCredentials: (clientId, clientSecret) => ipcRenderer.invoke('drive:saveCredentials', clientId, clientSecret),
-    connect: () => ipcRenderer.invoke('drive:connect'),
-    upload: (filename, content) => ipcRenderer.invoke('drive:upload', filename, content),
-    list: () => ipcRenderer.invoke('drive:list'),
-    download: (fileId) => ipcRenderer.invoke('drive:download', fileId),
-  },
 });
