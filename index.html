@@ -6,42 +6,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self'" />
   <title>Editor de Texto</title>
   <link rel="stylesheet" href="assets/css/app.css" />
+  <link rel="stylesheet" href="assets/css/overrides.css" />
   <link rel="stylesheet" href="node_modules/@fontsource/jetbrains-mono/400.css" />
   <link rel="stylesheet" href="node_modules/@fontsource/jetbrains-mono/500.css" />
-  <style>
-    textarea { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-    .menu-dropdown { display: none; }
-    .menu-dropdown.open { display: block; }
-
-    /* Scroll minimalista */
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: #a8a29e transparent;
-    }
-    .dark * {
-      scrollbar-color: #57534e transparent;
-    }
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #a8a29e;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #78716c;
-    }
-    .dark ::-webkit-scrollbar-thumb {
-      background: #57534e;
-    }
-    .dark ::-webkit-scrollbar-thumb:hover {
-      background: #44403c;
-    }
-  </style>
 </head>
 <body class="bg-stone-100 text-stone-800 h-screen flex flex-col overflow-hidden transition-colors dark:bg-stone-900 dark:text-stone-100">
   <!-- Barra de título + abas (estilo da referência) -->

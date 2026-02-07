@@ -1,0 +1,49 @@
+/* Estilos customizados do editor */
+
+textarea {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.menu-dropdown {
+  display: none;
+}
+
+.menu-dropdown.open {
+  display: block;
+}
+
+/* Scroll minimalista */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #a8a29e transparent;
+}
+
+.dark * {
+  scrollbar-color: #57534e transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a8a29e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #78716c;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #57534e;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #44403c;
+}
