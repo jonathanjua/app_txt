@@ -106,17 +106,28 @@ Após o build local, você pode:
 
 ```
 app-txt/
+├── .github/
+│   ├── workflows/
+│   │   └── build.yml      # CI: build para Windows, Linux e macOS
+│   └── RELEASE.md
 ├── assets/
 │   ├── css/
 │   │   ├── input.css      # Entrada do Tailwind
-│   │   └── app.css        # CSS gerado (não versionado)
+│   │   └── overrides.css  # Estilos customizados
 │   └── icon.png           # Ícone do app
+├── scripts/
+│   ├── copy-icon.js       # Cópia do ícone para build
+│   └── release.js         # Script de release
 ├── main.js                # Processo principal do Electron
 ├── preload.js             # Script de preload (bridge seguro)
 ├── renderer.js            # Lógica do editor (renderer)
 ├── index.html             # Interface do app
 ├── tailwind.config.js     # Configuração do Tailwind
 ├── package.json
+├── package-lock.json
+├── LICENSE
+├── Capturadetela.png      # Screenshot do app (README)
+├── .gitignore
 └── README.md
 ```
 
