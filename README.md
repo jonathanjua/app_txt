@@ -154,7 +154,6 @@ O app inclui várias otimizações:
 - ✅ **CSS minificado** e fontes locais (100% offline)
 - ✅ **Spellcheck desativado** para reduzir uso de recursos
 - ✅ **DevTools** só em desenvolvimento
-- ✅ **V8 / startup** — `electronFuses.loadBrowserProcessSpecificV8Snapshot: true` no electron-builder: o processo do browser usa o snapshot V8 dedicado (`browser_v8_context_snapshot.bin`), o que pode reduzir o tempo de inicialização. Se o app falhar ao abrir com erro de snapshot, defina como `false` no `build.electronFuses` do `package.json`.
 
 ## 📝 Uso
 

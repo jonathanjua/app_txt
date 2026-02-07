@@ -37,9 +37,6 @@
       "output": "dist",
       "buildResources": "build"
     },
-    "electronFuses": {
-      "loadBrowserProcessSpecificV8Snapshot": true
-    },
     "files": [
       "main.js",
       "preload.js",
