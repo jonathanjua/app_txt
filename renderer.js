@@ -275,7 +275,33 @@ document.querySelectorAll('.menu-dropdown [data-action]').forEach((item) => {
     else if (action === 'select-all') editor.focus() && editor.select();
     else if (action === 'theme-light') setTheme(false);
     else if (action === 'theme-dark') setTheme(true);
+    else if (action === 'shortcuts') showShortcutsModal();
   });
+});
+
+// --- Modal Atalhos ---
+const shortcutsModal = document.getElementById('shortcuts-modal');
+const shortcutsCloseBtn = document.getElementById('shortcuts-close');
+
+function showShortcutsModal() {
+  shortcutsModal.classList.remove('hidden');
+  shortcutsModal.classList.add('flex');
+  shortcutsModal.setAttribute('aria-hidden', 'false');
+  shortcutsCloseBtn?.focus();
+}
+
+function hideShortcutsModal() {
+  shortcutsModal.classList.add('hidden');
+  shortcutsModal.classList.remove('flex');
+  shortcutsModal.setAttribute('aria-hidden', 'true');
+}
+
+shortcutsCloseBtn?.addEventListener('click', hideShortcutsModal);
+shortcutsModal?.addEventListener('click', (e) => {
+  if (e.target === shortcutsModal) hideShortcutsModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && shortcutsModal && !shortcutsModal.classList.contains('hidden')) hideShortcutsModal();
 });
 
 // --- Menu de contexto (clique direito) ---

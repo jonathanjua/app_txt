@@ -1,8 +1,11 @@
-const { app, BrowserWindow, dialog, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
 
 let mainWindow;
+let tray = null;
+
+const iconPath = path.join(__dirname, 'assets', 'icon.png');
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -10,7 +13,7 @@ function createWindow() {
     height: 700,
     minWidth: 500,
     minHeight: 400,
-    icon: path.join(__dirname, 'assets/icon.png'),
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -31,14 +34,66 @@ function createWindow() {
     if (process.env.ELECTRON_OPEN_DEVTOOLS === '1') mainWindow.webContents.openDevTools({ mode: 'detach' });
   });
 
+  mainWindow.on('close', (event) => {
+    if (tray && !app.isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // Ícone na bandeja do sistema (tray) / menu bar (macOS)
+  const trayIcon = nativeImage.createFromPath(iconPath);
+  if (!trayIcon.isEmpty()) {
+    const size = process.platform === 'darwin' ? 22 : 16;
+    tray = new Tray(trayIcon.resize({ width: size, height: size }));
+    tray.setToolTip('Editor de Texto');
+
+    const updateTrayMenu = () => {
+      tray?.setContextMenu(Menu.buildFromTemplate([
+        {
+          label: mainWindow?.isVisible() ? 'Ocultar' : 'Mostrar',
+          click: () => {
+            if (mainWindow?.isVisible()) {
+              mainWindow.hide();
+            } else {
+              mainWindow?.show();
+              mainWindow?.focus();
+            }
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Sair',
+          click: () => {
+            app.isQuitting = true;
+            app.quit();
+          },
+        },
+      ]));
+    };
+    updateTrayMenu();
+    mainWindow.on('show', updateTrayMenu);
+    mainWindow.on('hide', updateTrayMenu);
+
+    tray.on('click', () => {
+      if (mainWindow?.isVisible()) {
+        mainWindow.focus();
+      } else {
+        mainWindow?.show();
+        mainWindow?.focus();
+      }
+    });
+  }
 }
 
 app.whenReady().then(() => {
   // Remove o menu padrão do Electron
   Menu.setApplicationMenu(null);
+  app.isQuitting = false;
   createWindow();
 });
 

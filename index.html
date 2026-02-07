@@ -12,6 +12,35 @@
     textarea { font-family: 'JetBrains Mono', ui-monospace, monospace; }
     .menu-dropdown { display: none; }
     .menu-dropdown.open { display: block; }
+
+    /* Scroll minimalista */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #a8a29e transparent;
+    }
+    .dark * {
+      scrollbar-color: #57534e transparent;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #a8a29e;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #78716c;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #57534e;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #44403c;
+    }
   </style>
 </head>
 <body class="bg-stone-100 text-stone-800 h-screen flex flex-col overflow-hidden transition-colors dark:bg-stone-900 dark:text-stone-100">
@@ -59,6 +88,8 @@
         <div class="relative">
           <button type="button" id="menu-view" class="px-3 py-1.5 text-sm rounded hover:bg-stone-600 dark:hover:bg-stone-700">Exibir</button>
           <div id="dropdown-view" class="menu-dropdown absolute left-0 top-full mt-0.5 py-1 min-w-[180px] rounded-md shadow-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-600 z-50">
+            <button type="button" data-action="shortcuts" class="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700">Atalhos...</button>
+            <div class="border-t border-stone-200 dark:border-stone-600 my-1"></div>
             <button type="button" data-action="theme-light" class="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700">Tema claro</button>
             <button type="button" data-action="theme-dark" class="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700">Tema escuro</button>
           </div>
@@ -95,6 +126,76 @@
     <span id="status-msg" class="text-stone-500 dark:text-stone-400"></span>
     <span class="ml-auto">UTF-8</span>
   </footer>
+
+  <!-- Modal Atalhos -->
+  <div id="shortcuts-modal" class="fixed inset-0 hidden items-center justify-center z-[200] bg-black/60 backdrop-blur-sm p-8" aria-hidden="true" role="dialog" aria-labelledby="shortcuts-title">
+    <div class="bg-white dark:bg-stone-800 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-600 max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-8 pt-8 pb-6 shrink-0">
+        <h2 id="shortcuts-title" class="text-xl font-semibold text-stone-800 dark:text-stone-100">Atalhos disponíveis</h2>
+        <button type="button" id="shortcuts-close" class="p-2.5 -mr-2.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-500 dark:text-stone-400 transition-colors" title="Fechar (Esc)">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="px-8 pb-8 overflow-y-auto flex-1 min-h-0">
+        <section class="mb-8">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-4">Geral</h3>
+          <ul class="space-y-3">
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Fechar esta janela</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Esc</kbd>
+            </li>
+          </ul>
+        </section>
+        <section class="mb-8">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-4">Arquivo</h3>
+          <ul class="space-y-3">
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Novo documento</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+N</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Abrir arquivo</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+O</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Salvar</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+S</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Fechar aba</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+W</kbd>
+            </li>
+          </ul>
+        </section>
+        <section class="mb-8">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-4">Editar</h3>
+          <ul class="space-y-3">
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Recortar</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+X</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Copiar</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+C</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Colar</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+V</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Selecionar tudo</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+A</kbd>
+            </li>
+            <li class="flex justify-between items-center gap-6 py-4 px-5 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+              <span class="text-base text-stone-700 dark:text-stone-200">Desfazer</span>
+              <kbd class="px-3 py-1.5 text-sm font-mono rounded-lg bg-stone-200 dark:bg-stone-600 text-stone-800 dark:text-stone-100 shrink-0">Ctrl+Z</kbd>
+            </li>
+          </ul>
+        </section>
+        <p class="text-sm text-stone-500 dark:text-stone-400 py-2">No macOS use <kbd class="px-1.5 py-0.5 rounded bg-stone-200 dark:bg-stone-600 font-mono text-xs">Cmd</kbd> em vez de Ctrl.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Menu de contexto (clique direito) -->
   <div id="context-menu" class="fixed hidden py-1 min-w-[200px] rounded-lg shadow-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-600 z-[100]">
