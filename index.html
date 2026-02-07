@@ -54,6 +54,8 @@
             <button type="button" data-action="paste" class="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700">Colar</button>
             <div class="border-t border-stone-200 dark:border-stone-600 my-1"></div>
             <button type="button" data-action="select-all" class="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700">Selecionar tudo</button>
+            <div class="border-t border-stone-200 dark:border-stone-600 my-1"></div>
+            <button type="button" data-action="sort-lines" class="w-full text-left px-4 py-2 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700">Ordenar linhas</button>
           </div>
         </div>
         <div class="relative">
@@ -70,13 +72,44 @@
   </header>
 
   <!-- Área do editor (toda a área disponível) -->
-  <main class="flex-1 flex flex-col min-h-0 overflow-hidden">
-    <textarea
-      id="editor"
-      class="flex-1 w-full min-h-0 p-4 text-stone-800 resize-none focus:outline-none text-base leading-relaxed bg-white placeholder-stone-400 transition-colors dark:bg-stone-800 dark:text-stone-100 dark:placeholder-stone-500"
-      spellcheck="false"
-    ></textarea>
+  <main id="main-editor" class="flex-1 flex flex-col min-h-0 overflow-hidden">
+    <div id="editor-wrap" class="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <textarea
+        id="editor"
+        class="flex-1 w-full min-h-0 p-4 text-stone-800 resize-none focus:outline-none text-base leading-relaxed bg-white placeholder-stone-400 transition-colors dark:bg-stone-800 dark:text-stone-100 dark:placeholder-stone-500"
+        spellcheck="false"
+      ></textarea>
+    </div>
+    <div id="virtual-scroll-wrap" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden bg-white dark:bg-stone-800">
+      <div class="flex items-center justify-between gap-2 px-4 py-2 border-b border-stone-200 dark:border-stone-600 shrink-0">
+        <span id="virtual-scroll-info" class="text-sm text-stone-500 dark:text-stone-400">Visualização virtual</span>
+        <button type="button" id="virtual-scroll-edit-btn" class="px-3 py-1.5 text-sm rounded-lg border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors">
+          Editar (carregar todo o conteúdo)
+        </button>
+      </div>
+      <div id="virtual-scroll-container" class="flex-1 min-h-0 overflow-auto">
+        <div id="virtual-scroll-content" style="position: relative;">
+          <div id="virtual-scroll-viewport" style="position: absolute; left: 0; right: 0; top: 0;"></div>
+        </div>
+      </div>
+    </div>
   </main>
+
+  <!-- Tela de carregamento ao abrir arquivo -->
+  <div id="open-file-loading" class="fixed inset-0 hidden flex items-center justify-center z-[250] bg-black/50 backdrop-blur-sm" aria-hidden="true" role="dialog" aria-label="Carregando arquivo">
+    <div class="bg-white dark:bg-stone-800 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-600 px-8 py-6 min-w-[280px] max-w-[90vw]">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full border-2 border-stone-300 dark:border-stone-600 border-t-stone-600 dark:border-t-stone-400 animate-spin"></div>
+        <div>
+          <p class="font-medium text-stone-800 dark:text-stone-100">Abrindo arquivo</p>
+          <p id="open-file-loading-text" class="text-sm text-stone-500 dark:text-stone-400">Carregando…</p>
+        </div>
+      </div>
+      <div class="h-2 rounded-full bg-stone-200 dark:bg-stone-700 overflow-hidden">
+        <div id="open-file-loading-bar" class="h-full rounded-full bg-stone-600 dark:bg-stone-500 transition-all duration-200" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- Barra de status (estilo da referência) -->
   <footer id="status-bar" class="flex items-center gap-4 px-4 py-1.5 text-xs border-t border-stone-300 dark:border-stone-600 bg-stone-200/80 dark:bg-stone-800/80 text-stone-600 dark:text-stone-400 shrink-0">

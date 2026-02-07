@@ -37,11 +37,15 @@
       "output": "dist",
       "buildResources": "build"
     },
+    "electronFuses": {
+      "loadBrowserProcessSpecificV8Snapshot": true
+    },
     "files": [
       "main.js",
       "preload.js",
-      "index.html",
       "renderer.js",
+      "worker-text.js",
+      "index.html",
       "assets/**",
       "node_modules/@fontsource/jetbrains-mono/**"
     ],

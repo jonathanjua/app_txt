@@ -5,6 +5,21 @@ const statusLnCol = document.getElementById('status-ln-col');
 const statusChars = document.getElementById('status-chars');
 const statusMsg = document.getElementById('status-msg');
 const contextMenu = document.getElementById('context-menu');
+const editorWrap = document.getElementById('editor-wrap');
+const virtualScrollWrap = document.getElementById('virtual-scroll-wrap');
+const virtualScrollContainer = document.getElementById('virtual-scroll-container');
+const virtualScrollContent = document.getElementById('virtual-scroll-content');
+const virtualScrollViewport = document.getElementById('virtual-scroll-viewport');
+const virtualScrollInfo = document.getElementById('virtual-scroll-info');
+const virtualScrollEditBtn = document.getElementById('virtual-scroll-edit-btn');
+
+const LINE_HEIGHT = 24;
+const VIRTUAL_SCROLL_THRESHOLD = 2000;
+const VISIBLE_BUFFER = 15;
+let virtualMode = false;
+let virtualLines = [];
+let virtualScrollRaf = null;
+let virtualScrollResizeObserver = null;
 
 let tabIdCounter = 0;
 let tabs = [];
@@ -48,18 +63,97 @@ function getCurrentTab() {
   return tabs[activeIndex] || null;
 }
 
+function getCurrentContent() {
+  return virtualMode ? virtualLines.join('\n') : editor.value;
+}
+
 function saveCurrentToTab() {
   const tab = getCurrentTab();
-  if (tab) tab.content = editor.value;
+  if (!tab) return;
+  if (virtualMode) return;
+  tab.content = editor.value;
 }
 
 function loadTabIntoEditor(index) {
   const tab = tabs[index];
   if (!tab) return;
-  editor.value = tab.content;
+  const content = tab.content;
+  virtualMode = false;
+  virtualLines = [];
+  virtualScrollWrap.classList.add('hidden');
+  virtualScrollWrap.classList.remove('flex');
+  editorWrap.classList.remove('hidden');
+  editor.value = content;
   updateStatus();
   updateStatusBar();
+  editor.focus();
 }
+
+function initVirtualScroll() {
+  virtualScrollResizeObserver?.disconnect();
+  virtualScrollResizeObserver = null;
+  const totalHeight = virtualLines.length * LINE_HEIGHT;
+  virtualScrollContent.style.height = totalHeight + 'px';
+  virtualScrollContent.style.minHeight = totalHeight + 'px';
+  virtualScrollViewport.innerHTML = '';
+  virtualScrollContainer.onscroll = () => {
+    if (virtualScrollRaf) cancelAnimationFrame(virtualScrollRaf);
+    virtualScrollRaf = requestAnimationFrame(updateVirtualView);
+  };
+  virtualScrollResizeObserver = new ResizeObserver(() => updateVirtualView());
+  virtualScrollResizeObserver.observe(virtualScrollContainer);
+  updateVirtualView();
+}
+
+function updateVirtualView() {
+  virtualScrollRaf = null;
+  if (!virtualLines.length) return;
+  const scrollTop = virtualScrollContainer.scrollTop;
+  const containerHeight = virtualScrollContainer.clientHeight;
+  const startIndex = Math.max(0, Math.floor(scrollTop / LINE_HEIGHT) - VISIBLE_BUFFER);
+  const visibleCount = Math.ceil(containerHeight / LINE_HEIGHT) + VISIBLE_BUFFER * 2;
+  const endIndex = Math.min(virtualLines.length, startIndex + visibleCount);
+  virtualScrollViewport.style.top = startIndex * LINE_HEIGHT + 'px';
+  virtualScrollViewport.style.height = (endIndex - startIndex) * LINE_HEIGHT + 'px';
+  const fragment = document.createDocumentFragment();
+  for (let i = startIndex; i < endIndex; i++) {
+    const div = document.createElement('div');
+    div.className = 'virtual-line';
+    div.textContent = virtualLines[i];
+    div.dataset.lineIndex = String(i + 1);
+    fragment.appendChild(div);
+  }
+  virtualScrollViewport.innerHTML = '';
+  virtualScrollViewport.appendChild(fragment);
+  updateVirtualStatusBar();
+}
+
+function updateVirtualStatusBar() {
+  if (!virtualMode || !virtualLines.length) return;
+  const scrollTop = virtualScrollContainer ? virtualScrollContainer.scrollTop : 0;
+  const firstVisibleLine = Math.floor(scrollTop / LINE_HEIGHT) + 1;
+  statusLnCol.textContent = `Ln ${firstVisibleLine}–${Math.min(firstVisibleLine + Math.ceil((virtualScrollContainer?.clientHeight || 0) / LINE_HEIGHT), virtualLines.length)} de ${virtualLines.length.toLocaleString()}`;
+  statusChars.textContent = `${virtualLines.join('\n').length.toLocaleString()} caracteres`;
+}
+
+function switchVirtualToEditor() {
+  if (!virtualMode || !virtualLines.length) return;
+  const content = virtualLines.join('\n');
+  const tab = getCurrentTab();
+  if (tab) tab.content = content;
+  virtualMode = false;
+  virtualLines = [];
+  virtualScrollWrap.classList.add('hidden');
+  virtualScrollWrap.classList.remove('flex');
+  editorWrap.classList.remove('hidden');
+  editor.value = content;
+  updateStatus();
+  updateStatusBar();
+  editor.focus();
+  showStatus('Conteúdo carregado no editor (pode travar em arquivos muito grandes)');
+}
+
+virtualScrollEditBtn?.addEventListener('click', switchVirtualToEditor);
 
 function renderTabBar() {
   tabBarEl.innerHTML = '';
@@ -105,7 +199,7 @@ function switchToTab(index) {
   activeIndex = index;
   loadTabIntoEditor(activeIndex);
   renderTabBar();
-  editor.focus();
+  if (!virtualMode) editor.focus();
 }
 
 function createNewTab(path, content) {
@@ -137,7 +231,7 @@ function closeTab(index) {
   else if (index === activeIndex) activeIndex = Math.min(activeIndex, tabs.length - 1);
   loadTabIntoEditor(activeIndex);
   renderTabBar();
-  editor.focus();
+  if (!virtualMode) editor.focus();
 }
 
 function getCursorLineCol() {
@@ -274,8 +368,43 @@ document.querySelectorAll('.menu-dropdown [data-action]').forEach((item) => {
     else if (action === 'theme-dark') setTheme(true);
     else if (action === 'shortcuts') showShortcutsModal();
     else if (action === 'drive') showDriveModal();
+    else if (action === 'sort-lines') runSortLinesInWorker();
   });
 });
+
+// --- Web Worker: processamento pesado (ordenar linhas) ---
+function runSortLinesInWorker() {
+  const text = getCurrentContent();
+  if (!text.trim()) {
+    showStatus('Nada para ordenar', 2000);
+    return;
+  }
+  showStatus('Ordenando linhas… (não feche a janela)', 0);
+  const worker = new Worker('worker-text.js');
+  worker.postMessage({ type: 'sortLines', text });
+  worker.onmessage = (e) => {
+    const { type, result, message } = e.data || {};
+    worker.terminate();
+    if (type === 'done') {
+      if (virtualMode) {
+        virtualLines = result.split(/\r?\n/);
+        updateVirtualView();
+      } else {
+        editor.value = result;
+      }
+      const tab = getCurrentTab();
+      if (tab) tab.isDirty = true;
+      renderTabBar();
+      showStatus('Linhas ordenadas');
+    } else {
+      showStatus(message || 'Erro ao ordenar', 4000);
+    }
+  };
+  worker.onerror = () => {
+    worker.terminate();
+    showStatus('Erro no worker ao ordenar', 4000);
+  };
+}
 
 // --- Modal Atalhos ---
 const shortcutsModal = document.getElementById('shortcuts-modal');
@@ -484,26 +613,63 @@ contextMenu.querySelectorAll('[data-ctx]').forEach((btn) => {
 
 btnNewTab.addEventListener('click', () => createNewTab(null, ''));
 
+const openFileLoadingEl = document.getElementById('open-file-loading');
+const openFileLoadingText = document.getElementById('open-file-loading-text');
+const openFileLoadingBar = document.getElementById('open-file-loading-bar');
+
+function showOpenFileLoading() {
+  openFileLoadingEl?.classList.remove('hidden');
+  openFileLoadingEl?.classList.add('flex');
+  openFileLoadingEl?.setAttribute('aria-hidden', 'false');
+  openFileLoadingText.textContent = 'Carregando…';
+  openFileLoadingBar.style.width = '0%';
+}
+
+function updateOpenFileProgress(bytesRead, totalBytes) {
+  if (!openFileLoadingText || !openFileLoadingBar) return;
+  const formatBytes = (n) => (n < 1024 ? n + ' B' : (n / 1024 / 1024).toFixed(1) + ' MB');
+  openFileLoadingText.textContent = totalBytes
+    ? `Lendo: ${formatBytes(bytesRead)} de ${formatBytes(totalBytes)}`
+    : `Lendo: ${formatBytes(bytesRead)}…`;
+  const pct = totalBytes && totalBytes > 0 ? Math.min(100, Math.round((bytesRead / totalBytes) * 100)) : 0;
+  openFileLoadingBar.style.width = pct + '%';
+}
+
+function hideOpenFileLoading() {
+  openFileLoadingEl?.classList.add('hidden');
+  openFileLoadingEl?.classList.remove('flex');
+  openFileLoadingEl?.setAttribute('aria-hidden', 'true');
+}
+
 async function doOpen() {
-  const path = await window.api.openFile();
-  if (!path) return;
-  const existing = tabs.findIndex((t) => t.path === path);
+  const filePath = await window.api.openFile();
+  if (!filePath) return;
+  const existing = tabs.findIndex((t) => t.path === filePath);
   if (existing >= 0) {
     switchToTab(existing);
     showStatus('Arquivo já aberto');
     return;
   }
+  showOpenFileLoading();
   try {
-    const content = await window.api.readFile(path);
-    createNewTab(path, content);
+    const result = await window.api.readFileStream(filePath, (p) => {
+      updateOpenFileProgress(p.bytesRead, p.totalBytes ?? null);
+    });
+    createNewTab(filePath, result.content);
     const tab = getCurrentTab();
     if (tab) tab.isDirty = false;
     renderTabBar();
     updateStatus();
-    showStatus('Arquivo aberto');
+    if (result.truncated) {
+      showStatus('Arquivo truncado a 200 MB (muito grande).', 6000);
+    } else {
+      showStatus('Arquivo aberto');
+    }
   } catch (err) {
     showStatus('Erro ao abrir', 4000);
     console.error(err);
+  } finally {
+    hideOpenFileLoading();
   }
 }
 

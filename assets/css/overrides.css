@@ -47,3 +47,16 @@ textarea {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #44403c;
 }
+
+/* Virtual scroll: apenas as linhas visíveis no DOM */
+.virtual-line {
+  height: 24px;
+  line-height: 24px;
+  padding: 0 1rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 1rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+}

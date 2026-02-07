@@ -24,6 +24,9 @@ O projeto não foi pensado para usar “a melhor tecnologia” de mercado; resol
 - 🎨 **Interface moderna** – Design limpo inspirado em editores profissionais
 - 🚀 **100% offline** – Todas as dependências incluídas (Tailwind e fontes locais)
 - 🔒 **Seguro** – Sandbox ativado, context isolation e operações de arquivo no processo principal
+- 📐 **Ordenar linhas** – Menu Editar → Ordenar linhas; usa **Web Worker** para não travar a interface em arquivos muito grandes (ex.: 500MB)
+- 📂 **Leitura em fluxo** – Abrir arquivo usa `fs.createReadStream` (chunks de 64 KB); não carrega o arquivo inteiro na RAM — ideal para logs de vários GB (arquivos &gt; 200 MB são truncados com aviso)
+- 📜 **Virtual scroll (janelamento)** – Arquivos com mais de 2.000 linhas são exibidos em modo virtual: só as linhas visíveis (e um buffer) ficam no DOM; o Chromium não renderiza 100.000+ linhas de uma vez. Botão "Editar (carregar todo o conteúdo)" para voltar ao editor completo.
 
 ## 🖼️ Capturas de Tela
 
@@ -121,6 +124,7 @@ app-txt/
 ├── main.js                # Processo principal do Electron
 ├── preload.js             # Script de preload (bridge seguro)
 ├── renderer.js            # Lógica do editor (renderer)
+├── worker-text.js         # Web Worker: processamento pesado (ordenar linhas)
 ├── index.html             # Interface do app
 ├── tailwind.config.js     # Configuração do Tailwind
 ├── package.json
@@ -143,10 +147,14 @@ app-txt/
 O app inclui várias otimizações:
 
 - ✅ **Sandbox** no renderer com operações de arquivo via IPC
+- ✅ **Web Workers** para processamento pesado (ex.: ordenar linhas) — a interface não congela em arquivos grandes
+- ✅ **Stream processing** — abertura de arquivo com `createReadStream` em chunks; progresso na barra de status; limite de 200 MB (truncado com aviso) para evitar OOM
+- ✅ **Virtual scrolling** — em arquivos com &gt; 2.000 linhas, só ~30–50 linhas visíveis no DOM; scroll suave sem travar o Chromium
 - ✅ **Debounce** na barra de status (60ms) durante digitação
 - ✅ **CSS minificado** e fontes locais (100% offline)
 - ✅ **Spellcheck desativado** para reduzir uso de recursos
 - ✅ **DevTools** só em desenvolvimento
+- ✅ **V8 / startup** — `electronFuses.loadBrowserProcessSpecificV8Snapshot: true` no electron-builder: o processo do browser usa o snapshot V8 dedicado (`browser_v8_context_snapshot.bin`), o que pode reduzir o tempo de inicialização. Se o app falhar ao abrir com erro de snapshot, defina como `false` no `build.electronFuses` do `package.json`.
 
 ## 📝 Uso
 
@@ -155,7 +163,8 @@ O app inclui várias otimizações:
 3. **Salvar:** Use `Ctrl+S` ou clique em "Salvar"
 4. **Salvar como:** Use o menu Arquivo → "Salvar como..."
 5. **Alternar tema:** Clique no ícone de sol/lua na barra superior
-6. **Fechar aba:** Clique no ✕ na aba ou use `Ctrl+W`
+6. **Ordenar linhas:** Menu Editar → Ordenar linhas (processamento em segundo plano, não trava a interface)
+7. **Fechar aba:** Clique no ✕ na aba ou use `Ctrl+W`
 
 ### Documentos não salvos
 

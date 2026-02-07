@@ -1,6 +1,7 @@
 const { app, BrowserWindow, dialog, ipcMain, Menu, Tray, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const http = require('http');
 const https = require('https');
 const url = require('url');
@@ -137,6 +138,61 @@ ipcMain.handle('dialog:saveFile', async (_, defaultPath) => {
 
 ipcMain.handle('fs:readFile', (_, filePath) => fs.readFile(filePath, 'utf-8'));
 ipcMain.handle('fs:writeFile', (_, filePath, content) => fs.writeFile(filePath, content, 'utf-8'));
+
+// Leitura em fluxo (evita carregar arquivo inteiro na RAM; útil para logs de vários GB)
+const STREAM_CHUNK_SIZE = 64 * 1024; // 64 KB por chunk
+const STREAM_MAX_BYTES = 200 * 1024 * 1024; // 200 MB — arquivos maiores são truncados
+
+ipcMain.handle('fs:readFileStreamStart', async (event, filePath, maxBytes = STREAM_MAX_BYTES) => {
+  let totalBytes = 0;
+  try {
+    const stat = await fs.stat(filePath);
+    totalBytes = stat.size;
+  } catch (_) {}
+  const effectiveTotal = Math.min(totalBytes, maxBytes);
+
+  return new Promise((resolve, reject) => {
+    const sender = event.sender;
+    sender.send('fs:readStreamProgress', { bytesRead: 0, totalBytes: effectiveTotal || null, truncated: false });
+
+    const stream = fsSync.createReadStream(filePath, {
+      encoding: 'utf-8',
+      highWaterMark: STREAM_CHUNK_SIZE,
+    });
+    let totalRead = 0;
+    let truncated = false;
+
+    stream.on('data', (chunk) => {
+      totalRead += chunk.length;
+      if (totalRead > maxBytes) {
+        truncated = true;
+        stream.destroy();
+        return;
+      }
+      sender.send('fs:readStreamChunk', chunk);
+      sender.send('fs:readStreamProgress', { bytesRead: totalRead, totalBytes: effectiveTotal || null, truncated: false });
+    });
+
+    stream.on('end', () => {
+      if (!truncated) {
+        sender.send('fs:readStreamEnd', { bytesRead: totalRead, truncated: false });
+        resolve({ bytesRead: totalRead, truncated: false });
+      }
+    });
+
+    stream.on('error', (err) => {
+      sender.send('fs:readStreamError', err.message);
+      reject(err);
+    });
+
+    stream.on('close', () => {
+      if (truncated) {
+        sender.send('fs:readStreamEnd', { bytesRead: totalRead, truncated: true });
+        resolve({ bytesRead: totalRead, truncated: true });
+      }
+    });
+  });
+});
 
 // --- Google Drive (OAuth + API) ---
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
