@@ -4,6 +4,8 @@
 [![Electron](https://img.shields.io/badge/Electron-28.0-blue.svg)](https://www.electronjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8.svg)](https://tailwindcss.com/)
 
+**[⬇️ Baixar última versão (Windows, Linux, macOS)](https://github.com/jonathanjua/app-txt/releases/latest)**
+
 Editor de texto simples e moderno construído com Electron, HTML, JavaScript e Tailwind CSS. Interface limpa com suporte a múltiplas abas, temas claro/escuro e persistência automática de documentos não salvos.
 
 ### Sobre o projeto
@@ -29,7 +31,9 @@ O projeto não foi pensado para usar “a melhor tecnologia” de mercado; resol
 
 ## 🚀 Instalação
 
-### Pré-requisitos
+**Quer só usar o app?** Baixe o instalável da [última release](https://github.com/jonathanjua/app-txt/releases/latest) (`.exe` no Windows, `.AppImage`/`.deb` no Linux, `.dmg` no macOS).
+
+### Pré-requisitos (para rodar do código-fonte)
 
 - Node.js 16+ e npm
 
