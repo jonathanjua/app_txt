@@ -20,6 +20,10 @@
   "author": "Jonathan de Almeida <jonathan.almeida@gmail.com>",
   "homepage": "https://github.com/jonathanjua/app-txt",
   "license": "MIT",
+  "overrides": {
+    "wrappy": "1.0.2",
+    "core-util-is": "1.0.2"
+  },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.0.0"
   },
