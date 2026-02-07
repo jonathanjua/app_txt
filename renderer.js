@@ -1,6 +1,5 @@
 const editor = document.getElementById('editor');
 const btnNewTab = document.getElementById('btn-new-tab');
-const btnTheme = document.getElementById('btn-theme');
 const tabBarEl = document.getElementById('tab-bar');
 const statusLnCol = document.getElementById('status-ln-col');
 const statusChars = document.getElementById('status-chars');
@@ -38,8 +37,6 @@ function applySavedTheme() {
   const saved = localStorage.getItem(THEME_KEY);
   setTheme(saved === 'dark');
 }
-
-btnTheme.addEventListener('click', () => setTheme(!isDarkTheme()));
 
 // --- Abas ---
 
