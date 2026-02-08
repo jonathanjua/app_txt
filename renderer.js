@@ -31,8 +31,12 @@ const THEME_KEY = 'editor-theme';
 const UNSAVED_TABS_KEY = 'editor-unsaved-tabs';
 const UNSAVED_DEBOUNCE_MS = 2000;
 const STATUS_BAR_DEBOUNCE_MS = 60;
+// Salvar automaticamente
+const AUTO_SAVE_KEY = 'editor-auto-save';
+const AUTO_SAVE_DEBOUNCE_MS = 1500;
 let unsavedDebounceTimer = null;
 let statusBarDebounceTimer = null;
+let autoSaveDebounceTimer = null;
 
 function isDarkTheme() {
   return document.documentElement.classList.contains('dark');
@@ -51,6 +55,30 @@ function setTheme(dark) {
 function applySavedTheme() {
   const saved = localStorage.getItem(THEME_KEY);
   setTheme(saved === 'dark');
+}
+
+function getAutoSave() {
+  return localStorage.getItem(AUTO_SAVE_KEY) === '1';
+}
+
+function setAutoSave(enabled) {
+  localStorage.setItem(AUTO_SAVE_KEY, enabled ? '1' : '0');
+}
+
+function updateAutoSaveMenuItem() {
+  const check = document.getElementById('auto-save-check');
+  if (check) check.classList.toggle('hidden', !getAutoSave());
+}
+
+function scheduleAutoSave() {
+  if (!getAutoSave()) return;
+  const tab = getCurrentTab();
+  if (!tab?.path || virtualMode) return;
+  if (autoSaveDebounceTimer) clearTimeout(autoSaveDebounceTimer);
+  autoSaveDebounceTimer = setTimeout(() => {
+    autoSaveDebounceTimer = null;
+    save();
+  }, AUTO_SAVE_DEBOUNCE_MS);
 }
 
 // --- Abas ---
@@ -331,6 +359,7 @@ editor.addEventListener('input', () => {
   debouncedUpdateStatusBar();
   renderTabBar();
   scheduleUnsavedSave();
+  scheduleAutoSave();
 });
 
 editor.addEventListener('select', updateStatusBar);
@@ -359,6 +388,10 @@ document.querySelectorAll('.menu-dropdown [data-action]').forEach((item) => {
     else if (action === 'open') doOpen();
     else if (action === 'save') save();
     else if (action === 'save-as') saveAs();
+    else if (action === 'toggle-auto-save') {
+      setAutoSave(!getAutoSave());
+      updateAutoSaveMenuItem();
+    }
     else if (action === 'undo') editor.focus() && document.execCommand('undo');
     else if (action === 'cut') editor.focus() && document.execCommand('cut');
     else if (action === 'copy') editor.focus() && document.execCommand('copy');
@@ -583,6 +616,7 @@ window.addEventListener('beforeunload', () => saveUnsavedToStorage());
 
 // Inicialização: restaurar não salvos ou uma aba vazia
 applySavedTheme();
+updateAutoSaveMenuItem();
 if (!restoreUnsavedFromStorage()) {
   createNewTab(null, '');
 }

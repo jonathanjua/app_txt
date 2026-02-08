@@ -25,7 +25,8 @@
   "license": "MIT",
   "overrides": {
     "wrappy": "1.0.2",
-    "core-util-is": "1.0.2"
+    "core-util-is": "1.0.2",
+    "inflight": "1.0.6"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.0.0"
