@@ -18,6 +18,7 @@ O projeto não foi pensado para usar “a melhor tecnologia” de mercado; resol
 
 - 📑 **Múltiplas abas** – Edite vários arquivos simultaneamente
 - 💾 **Persistência automática** – Documentos não salvos são guardados e restaurados ao reabrir o app
+- 💾 **Salvar automaticamente** – Opção no menu Arquivo; quando ativada, as alterações são salvas automaticamente após uma pausa na digitação (apenas em abas com arquivo já aberto/salvo)
 - 🌓 **Temas claro/escuro** – Alternância rápida entre temas
 - ⌨️ **Atalhos de teclado** – Navegação e edição eficiente
 - 📊 **Barra de status** – Mostra linha, coluna e contagem de caracteres
@@ -161,9 +162,10 @@ O app inclui várias otimizações:
 2. **Abrir arquivo:** Clique em "Abrir" ou use `Ctrl+O`
 3. **Salvar:** Use `Ctrl+S` ou clique em "Salvar"
 4. **Salvar como:** Use o menu Arquivo → "Salvar como..."
-5. **Alternar tema:** Clique no ícone de sol/lua na barra superior
-6. **Ordenar linhas:** Menu Editar → Ordenar linhas (processamento em segundo plano, não trava a interface)
-7. **Fechar aba:** Clique no ✕ na aba ou use `Ctrl+W`
+5. **Salvar automaticamente:** Menu Arquivo → "Salvar automaticamente" (marca/desmarca). Quando marcado, o arquivo da aba atual é salvo sozinho após ~1,5 s sem digitar (só em abas que já têm arquivo).
+6. **Alternar tema:** Clique no ícone de sol/lua na barra superior
+7. **Ordenar linhas:** Menu Editar → Ordenar linhas (processamento em segundo plano, não trava a interface)
+8. **Fechar aba:** Clique no ✕ na aba ou use `Ctrl+W`
 
 ### Documentos não salvos
 
