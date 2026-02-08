@@ -1,6 +1,6 @@
 {
   "name": "app-txt",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Editor de texto simples",
   "main": "main.js",
   "scripts": {
